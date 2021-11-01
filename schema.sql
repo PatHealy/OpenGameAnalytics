@@ -65,7 +65,6 @@ CREATE TABLE IF NOT EXISTS independent_point (
 CREATE TABLE IF NOT EXISTS dependent_point (
     pk_dependent_point_id INT AUTO_INCREMENT PRIMARY KEY,
     attribute_name varchar(50),
-    description varchar(50),
     info TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_user_id INT,
