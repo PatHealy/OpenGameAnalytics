@@ -1,37 +1,29 @@
-## Welcome to GitHub Pages
+## What is OpenGameAnalytics
 
-You can use the [editor on GitHub](https://github.com/PatHealy/GameActionAPI/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+OpenGameAnalytics is an open-source tool built for video game researchers to keep track of valuable data on player behavior. 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+It consists of a Flask server back-end connected to a MySQL database and Unity client package. The Flask server hosts a fully REST-ful API, so one could easily develop a new client package to access the API from another game engine or software.
 
-### Markdown
+In order to use OpenGameAnalytics, you must host the Flask server and SQL database yourself and simply add the client package to your game. Please refer to the Quick Start Guide below.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## What data is OpenGameAnalytics built to support?
 
-```markdown
-Syntax highlighted code block
+Our database is constructed specifically to serve the needs of serious games researchers, but these needs could be expanded with small modifications.
 
-# Header 1
-## Header 2
-### Header 3
+The application is built to collect:
+- Users identified by randomly generated tokens per device
+- Session data regarding the start, end, and duration of a player's play session
+- Player actions during a play session
+- Conditions assigned to the player for the purposes of experimentation (i.e. independent variables)
+- Data capturing study endpoints (i.e. dependent variables)
+- Information about the player that we don't expect to change during play (i.e. demographics)
 
-- Bulleted
-- List
+You can find the structure of this database in [the API documentation](https://docs.google.com/document/d/1boJc0PTgcztlJy4J4IM-3FxQNMzzfH5-iXgfxh5r_A4/edit?usp=sharing).
 
-1. Numbered
-2. List
+## Quick Start Guide
 
-**Bold** and _Italic_ and `Code` text
+### Running the Flask Server
 
-[Link](url) and ![Image](src)
-```
+### Connecting a Unity Client
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
 
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/PatHealy/GameActionAPI/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
