@@ -75,10 +75,10 @@ class UserInfoAPI(Resource):
 	def post(self):
 		json_data = request.get_json(force=True)
 		user = json_data['user']
-		user_info = json_data['user_info']
+		user_info = json_data['data_point']
 
 		if auth(user['username'], user['token']):
-			new_info = UserInfo(attribute_name=user_info['attribute_name'], info=user_info['info'], fk_user_id=User.query.filter_by(username=un).first().pk_user_id)
+			new_info = UserInfo(attribute_name=user_info['attribute_name'], info=user_info['info'], fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
 			db.session.add(new_info)
 			db.session.commit()
 			return Response(status=HTTPStatus.CREATED)
@@ -159,10 +159,10 @@ class ActionAPI(Resource):
 		json_data = request.get_json(force=True)
 		user = json_data['user']
 		play_session_id = json_data['play_session_id']
-		action = json_data['action']
+		action = json_data['data_point']
 
 		if auth(user['username'], user['token']):
-			new_action = PlayAction(action_name=action['action_name'], info=action['info'], fk_user_id=User.query.filter_by(username=un).first().pk_user_id, fk_play_session_id=play_session_id)
+			new_action = PlayAction(action_name=action['attribute_name'], info=action['info'], fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id, fk_play_session_id=play_session_id)
 			db.session.add(new_action)
 			db.session.commit()
 			return Response(status=HTTPStatus.CREATED)
@@ -174,10 +174,10 @@ class IndependentAPI(Resource):
 	def post(self):
 		json_data = request.get_json(force=True)
 		user = json_data['user']
-		point_data = json_data['independent_point']
+		point_data = json_data['data_point']
 
 		if auth(user['username'], user['token']):
-			new_point = IndependentPoint(attribute_name=point_data['attribute_name'], info=point_data['info'], fk_user_id=User.query.filter_by(username=un).first().pk_user_id)
+			new_point = IndependentPoint(attribute_name=point_data['attribute_name'], info=point_data['info'], fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
 			db.session.add(new_point)
 			db.session.commit()
 			return Response(status=HTTPStatus.CREATED)
@@ -189,10 +189,10 @@ class DependentAPI(Resource):
 	def post(self):
 		json_data = request.get_json(force=True)
 		user = json_data['user']
-		point_data = json_data['dependent_point']
+		point_data = json_data['data_point']
 
 		if auth(user['username'], user['token']):
-			new_point = DependentPoint(attribute_name=point_data['attribute_name'], info=point_data['info'], fk_user_id=User.query.filter_by(username=un).first().pk_user_id)
+			new_point = DependentPoint(attribute_name=point_data['attribute_name'], info=point_data['info'], fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
 			db.session.add(new_point)
 			db.session.commit()
 			return Response(status=HTTPStatus.CREATED)
