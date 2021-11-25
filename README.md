@@ -72,10 +72,52 @@ If you want deploy the Flask server so you can use it *in the wild*, there are a
 
 ### Connecting a Unity Client
 
+#### Import the Unity Package
 
+You can download the most recent build of the Unity Package [here](). Simply drag the package file into your Unity client to import it into your project.
 
+#### Configure the Client
 
+Most of OpenGameAnalytics in Unity is based around a single game object. After you've imported the package, go to the `prefabs` subfolder and drag the `OpenGameAnalytics` prefab into the first scene of your game. This object will sustain itself as other scenes load and cannot be a child of another object in the scene. 
 
+This object will handle most of your data collection automatically (at least data around play session times and durations) but you first must set a few parameters, which you can modify from the inspector:
+
+![Config image](/documentation/unityparameters.png)
+
+These are the four parameters:
+- API_URL: The url of wherever you've hosted the Flask server. The default value is for a local server
+- `GAME_ID`: This is the `GAME_ID` specific to this game, described above. Should be a 6-digit integer.
+- session_continue_time: By default, the client will poll the server to create session_continue objects indicating the player currently has the game open. This float indicates the number of seconds between these POSTs.
+- poll_server_when_playing: A boolean indicating whether the session_continue polling will occur at all.
+
+#### Modifying your game's code to collect extra data
+
+Outside of simple session data (i.e. when a given player is playing), OpenGameAnalytics gives you four methods for saving data. These methods are:
+- SaveUserInfo(string attributeName, string info): This saves a piece of information about this user that we do not expect to change over the course of play, such as demographic information
+- SaveUserAction(string action_name, string info): This is some action the player has performed while playing the game.
+- AssignCondition(string conditionType, string info): This is saving that an experimental condition has been assigned to this player, i.e. the independent variable.
+- SaveStudyEndpoint(string attributeName, string info): This is capturing a piece of data relevant to a study endpoint, i.e. the dependent variable.
+
+```C#
+// Saves this user's age as 32
+OpenGameAnalytics.instance.SaveUserInfo("age", "32");
+
+// Saves that this user's study ID is 00012
+OpenGameAnalytics.instance.SaveUserInfo("study_id", "00012");
+
+// Saves that the user choose option #4 during choice #2
+OpenGameAnalytics.instance.SaveUserAction("choice2", "4");
+
+// Saves that the user was randomly assigned to the 1st person condition
+OpenGameAnalytics.instance.AssignCondition("perspective", "1st-person");
+
+// Saves that the user chose answer 'A' for the first question of some quiz
+OpenGameAnalytics.instance.SaveStudyEndpoint("QuizQuestion1", "A");
+// ^^^ Would only use this if there's something in the game itself to measure an endpoint
+// i.e. something we may expect to be changed by the game
+```
+
+You can place code like this in any of your scripts and it will call the OpenGameAnalytics object to save the data.
 
 
 
