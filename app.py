@@ -1,6 +1,5 @@
 # Developed by Pat Healy
 # patwhealy.com
-# Last edited 11/1/21
 
 from flask import Flask, jsonify, Response, request
 from flask_restful import Api, Resource
@@ -24,9 +23,7 @@ app = Flask(__name__)
 # 	hostname="XXXXXXXXXXXXXXX",
 # 	databasename="XXXXXXXXXXX",
 # )
-# import os
-# basedir = os.path.abspath(os.path.dirname(__file__))
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'test.db')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
