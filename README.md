@@ -74,7 +74,7 @@ If you want deploy the Flask server so you can use it *in the wild*, there are a
 
 #### Import the Unity Package
 
-You can download the most recent build of the Unity Package [here](). Simply drag the package file into your Unity client to import it into your project.
+You can download the most recent build of the Unity Package [here](https://github.com/PatHealy/OpenGameAnalytics-Unity/releases). Simply drag the package file into your Unity client to import it into your project.
 
 #### Configure the Client
 
