@@ -241,15 +241,15 @@ def admin_dashboard():
 
 @app.route("/admin/dump")
 def download_contents():
-	users = pd.read_sql(User.query.statement, User.query.session.bind)
-	user_infos = pd.read_sql(UserInfo.query.statement, UserInfo.query.session.bind)
-	play_sessions = pd.read_sql(PlaySession.query.statement, PlaySession.query.session.bind)
-	play_session_starts = pd.read_sql(PlaySessionStart.query.statement, PlaySessionStart.query.session.bind)
-	play_session_continues = pd.read_sql(PlaySessionContinue.query.statement, PlaySessionContinue.query.session.bind)
-	play_session_ends = pd.read_sql(PlaySessionEnd.query.statement, PlaySessionEnd.query.session.bind)
-	play_actions = pd.read_sql(PlayAction.query.statement, PlayAction.query.session.bind)
-	independent_points = pd.read_sql(IndependentPoint.query.statement, IndependentPoint.query.session.bind)
-	dependent_points = pd.read_sql(DependentPoint.query.statement, DependentPoint.query.session.bind)
+	users = pd.read_sql("select * from user;", db.session.bind)
+	user_infos = pd.read_sql("select * from user_info;", db.session.bind)
+	play_sessions = pd.read_sql("select * from play_session;", db.session.bind)
+	play_session_starts = pd.read_sql("select * from play_session_start;", db.session.bind)
+	play_session_continues = pd.read_sql("select * from play_session_continue;", db.session.bind)
+	play_session_ends = pd.read_sql("select * from play_session_end;", db.session.bind)
+	play_actions = pd.read_sql("select * from play_action;", db.session.bind)
+	independent_points = pd.read_sql("select * from independent_point;", db.session.bind)
+	dependent_points = pd.read_sql("select * from dependent_point;", db.session.bind)
 
 	with pd.ExcelWriter('data_dump.xlsx') as writer:
 		users.to_excel(writer, sheet_name="Users")
