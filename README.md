@@ -26,9 +26,9 @@ To get started, you need to get the Flask server running and set a client up to 
 
 ### Running the Flask Server
 
-The entire Flask server runs off of two files: `app.py` and `models.py`. 
+The flask server primarily runs off of `app.py`. You will have to adjust some configuration options in `config.py`.
 
-For the Flask server to run properly, you'll need your database hosted somewhere. I run my own deployment of OpenGameAnalytics with a MySQL server but in theory you can use any SQL-style relational database with some modification. By default, as you can see in the `app.py` source code, the application will connect to the SQLite database at `test.db`. See the source code below that begins around line 20:
+For the Flask server to run properly, you'll need your database hosted somewhere. I run my own deployment of OpenGameAnalytics with a MySQL server but in theory you can use any SQL-style relational database with some modification. By default, as you can see in `config.py`, the application will connect to the SQLite database at `test.db`. See the source code below that begins around line 20:
 
 ```python
 # app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
@@ -38,13 +38,13 @@ For the Flask server to run properly, you'll need your database hosted somewhere
 # 	databasename="XXXXXXXXXXX",
 # )
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data/test.db"
 ```
 For testing purposes, go ahead and try the following steps with the code unchanged! The code will run fine with the SQLite database connection but this is not recommended if you expect a large number of users. 
 
-To connect to your own MySQL server, simply modify the database credentials in lines 21-24 per your database, uncomment lines 20-25, and remove the SQLite line at line 27. The schema for the database is found in `schema.sql`.
+To connect to your own MySQL server, simply modify the commented-out database credentials per your database and remove the SQLite line. The schema for the database is found in `data/schema.sql`.
 
-There is one other line you will definitely need to edit! See line 44 below:
+There is one other line you will definitely need to edit! See this from `config.py`:
 
 ```python
 game_dictionary = {959742: "Example Game"}

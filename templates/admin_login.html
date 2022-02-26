@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-fluid align-center">
+<form action="/admin" method="post">
+  <div class="row">
+      <div class="col-2"></div>
+      <!-- Email input -->
+      <div class="col form-outline mb-4">
+        <input type="text" id="form3Example3" class="form-control form-control-lg"
+          placeholder="Username" name="username"/>
+        <label class="form-label" for="form3Example3">Username</label>
+      </div>
+      <div class="col-2"></div>
+  </div>
+  <div class="row">
+      <div class="col-2"></div>
+      <!-- Password input -->
+      <div class="col form-outline mb-3">
+        <input type="password" id="form3Example4" class="form-control form-control-lg"
+          placeholder="Enter password" name="password"/>
+        <label class="form-label" for="form3Example4">Password</label>
+      </div>
+      <div class="col-2"></div>
+  </div>
+  <div class="row">
+      <div class="col-2"></div>
+      <div class="col text-center text-lg-start mt-4 pt-2">
+        <button type="submit" class="btn btn-primary btn-lg"
+          style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
+      </div>
+      <div class="col-2"></div>
+  </div>
+</form>
+</div>
+{% endblock %}
