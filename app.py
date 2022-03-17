@@ -10,8 +10,9 @@ from http import HTTPStatus
 import pandas as pd
 import random
 import string
+from dateutil import parser
 
-from models import User, UserInfo, PlaySession, PlaySessionStart, PlaySessionContinue, PlaySessionEnd, PlayAction, IndependentPoint, DependentPoint
+from models import User, UserInfo, PlaySession, PlaySessionContinue, PlaySessionEnd, PlayAction, IndependentPoint, DependentPoint
 from config import admins, database_url, secret_key, game_dictionary
 
 #####################################################
@@ -69,7 +70,7 @@ class UserInfoAPI(Resource):
 		user_info = json_data['data_point']
 
 		if auth(user['username'], user['token']):
-			new_info = UserInfo(attribute_name=user_info['attribute_name'], info=user_info['info'],
+			new_info = UserInfo(attribute_name=user_info['attribute_name'], info=user_info['info'], created_at=parser.parse(json_data['created_at']),
 			                    fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
 			db.session.add(new_info)
 			db.session.commit()
@@ -77,42 +78,17 @@ class UserInfoAPI(Resource):
 		else:
 			return Response(status=HTTPStatus.FORBIDDEN)
 
-
 # /session
 class SessionAPI(Resource):
-	def get(self, game_id):
-		if game_id in game_dictionary.keys():
-			new_ses = PlaySession()
-			db.session.add(new_ses)
-			db.session.commit()
-			res = jsonify({'play_session_id': new_ses.pk_play_session_id})
-			# res.status = HTTPStatus.CREATED
-			return res
-		else:
-			return Response(status=HTTPStatus.FORBIDDEN)
-
-
-# /session/user
-class SessionUserAPI(Resource):
-	def post(self):
-		json_data = request.json
+	def post(self, game_id):
+		json_data = request.get_json(force=True)
 		user = json_data['user']
-		play_session_id = json_data['play_session_id']
-
-		if auth(user['username'], user['token']):
-			play_ses = PlaySession.query.filter_by(pk_play_session_id=play_session_id).first()
-			play_ses.fk_user_id = User.query.filter_by(username=user['username']).first().pk_user_id
-			db.session.merge(play_ses)
-			# db.session.commit()
-			# db.session.commit()
+		if game_id in game_dictionary.keys() and auth(user['username'], user['token']):
+			new_ses = PlaySession(created_at=parser.parse(json_data['created_at']), fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
+			db.session.add(new_ses)
+			res = jsonify({'play_session_id': new_ses.pk_play_session_id})
 			db.session.commit()
-
-			# db.session.flush()
-
-			new_ses_start = PlaySessionStart(fk_play_session_id=play_session_id)
-			db.session.add(new_ses_start)
-			db.session.commit()
-			return Response(status=HTTPStatus.CREATED)
+			return res
 		else:
 			return Response(status=HTTPStatus.FORBIDDEN)
 
@@ -125,7 +101,7 @@ class SessionContinueAPI(Resource):
 		play_session_id = json_data['play_session_id']
 
 		if auth(user['username'], user['token']):
-			new_ses_continue = PlaySessionContinue(fk_play_session_id=play_session_id)
+			new_ses_continue = PlaySessionContinue(fk_play_session_id=play_session_id, created_at=parser.parse(json_data['created_at']))
 			db.session.add(new_ses_continue)
 			db.session.commit()
 			return Response(status=HTTPStatus.CREATED)
@@ -141,7 +117,7 @@ class SessionEndAPI(Resource):
 		play_session_id = json_data['play_session_id']
 
 		if auth(user['username'], user['token']):
-			new_ses_end = PlaySessionEnd(fk_play_session_id=play_session_id)
+			new_ses_end = PlaySessionEnd(fk_play_session_id=play_session_id, created_at=parser.parse(json_data['created_at']))
 			db.session.add(new_ses_end)
 			db.session.commit()
 			return Response(status=HTTPStatus.CREATED)
@@ -157,7 +133,7 @@ class ActionAPI(Resource):
 		action = json_data['data_point']
 
 		if auth(user['username'], user['token']):
-			new_action = PlayAction(action_name=action['attribute_name'], info=action['info'],
+			new_action = PlayAction(action_name=action['attribute_name'], info=action['info'], created_at=parser.parse(json_data['created_at']),
 			                        fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id,
 			                        fk_play_session_id=play_session_id)
 			db.session.add(new_action)
@@ -175,7 +151,7 @@ class IndependentAPI(Resource):
 		point_data = json_data['data_point']
 
 		if auth(user['username'], user['token']):
-			new_point = IndependentPoint(attribute_name=point_data['attribute_name'], info=point_data['info'],
+			new_point = IndependentPoint(attribute_name=point_data['attribute_name'], info=point_data['info'], created_at=parser.parse(json_data['created_at']),
 			                             fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
 			db.session.add(new_point)
 			db.session.commit()
@@ -192,7 +168,7 @@ class DependentAPI(Resource):
 		point_data = json_data['data_point']
 
 		if auth(user['username'], user['token']):
-			new_point = DependentPoint(attribute_name=point_data['attribute_name'], info=point_data['info'],
+			new_point = DependentPoint(attribute_name=point_data['attribute_name'], info=point_data['info'], created_at=parser.parse(json_data['created_at']),
 			                           fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
 			db.session.add(new_point)
 			db.session.commit()
@@ -203,7 +179,6 @@ class DependentAPI(Resource):
 api.add_resource(UserAPI, '/user/<int:game_id>')
 api.add_resource(UserInfoAPI, '/user/info')
 api.add_resource(SessionAPI, '/session/<int:game_id>')
-api.add_resource(SessionUserAPI, '/session/user')
 api.add_resource(SessionContinueAPI, '/session/continue')
 api.add_resource(SessionEndAPI, '/session/end')
 api.add_resource(ActionAPI, '/session/action')
@@ -244,7 +219,6 @@ def download_contents():
 	users = pd.read_sql("select * from user;", db.session.bind)
 	user_infos = pd.read_sql("select * from user_info;", db.session.bind)
 	play_sessions = pd.read_sql("select * from play_session;", db.session.bind)
-	play_session_starts = pd.read_sql("select * from play_session_start;", db.session.bind)
 	play_session_continues = pd.read_sql("select * from play_session_continue;", db.session.bind)
 	play_session_ends = pd.read_sql("select * from play_session_end;", db.session.bind)
 	play_actions = pd.read_sql("select * from play_action;", db.session.bind)
@@ -255,7 +229,6 @@ def download_contents():
 		users.to_excel(writer, sheet_name="Users")
 		user_infos.to_excel(writer, sheet_name="User Infos")
 		play_sessions.to_excel(writer, sheet_name="Play Sessions")
-		play_session_starts.to_excel(writer, sheet_name="Play Session Starts")
 		play_session_continues.to_excel(writer, sheet_name="Play Session Continues")
 		play_session_ends.to_excel(writer, sheet_name="Play Session Ends")
 		play_actions.to_excel(writer, sheet_name="Play Actions")

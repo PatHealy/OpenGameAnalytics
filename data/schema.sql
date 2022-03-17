@@ -11,26 +11,23 @@ CREATE TABLE IF NOT EXISTS user_info (
     attribute_name varchar(50),
     info TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_user_id INT,
     FOREIGN KEY (fk_user_id) REFERENCES user(pk_user_id)
 );
 
 CREATE TABLE IF NOT EXISTS play_session (
 	pk_play_session_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_user_id INT,
     FOREIGN KEY (fk_user_id) REFERENCES user(pk_user_id)
-);
-
-CREATE TABLE IF NOT EXISTS play_session_start (
-	pk_play_session_start_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fk_play_session_id INT,
-    FOREIGN KEY (fk_play_session_id) REFERENCES play_session(pk_play_session_id)
 );
 
 CREATE TABLE IF NOT EXISTS play_session_continue (
 	pk_play_session_continue_id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_play_session_id INT,
     FOREIGN KEY (fk_play_session_id) REFERENCES play_session(pk_play_session_id)
 );
@@ -38,6 +35,7 @@ CREATE TABLE IF NOT EXISTS play_session_continue (
 CREATE TABLE IF NOT EXISTS play_session_end (
 	pk_play_session_end_id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_play_session_id INT,
     FOREIGN KEY (fk_play_session_id) REFERENCES play_session(pk_play_session_id)
 );
@@ -47,6 +45,7 @@ CREATE TABLE IF NOT EXISTS play_action (
 	action_name varchar(100),
     info TEXT,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_user_id INT,
     fk_play_session_id INT,
     FOREIGN KEY (fk_user_id) REFERENCES user(pk_user_id),
@@ -58,6 +57,7 @@ CREATE TABLE IF NOT EXISTS independent_point (
     attribute_name varchar(50),
     info TEXT,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_user_id INT,
     FOREIGN KEY (fk_user_id) REFERENCES user(pk_user_id)
 );
@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS dependent_point (
     attribute_name varchar(50),
     info TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fk_user_id INT,
     FOREIGN KEY (fk_user_id) REFERENCES user(pk_user_id)
 );
