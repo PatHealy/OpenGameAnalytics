@@ -86,8 +86,8 @@ class SessionAPI(Resource):
 		if game_id in game_dictionary.keys() and auth(user['username'], user['token']):
 			new_ses = PlaySession(created_at=parser.parse(json_data['created_at']), fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
 			db.session.add(new_ses)
-			res = jsonify({'play_session_id': new_ses.pk_play_session_id})
 			db.session.commit()
+			res = jsonify({'play_session_id': new_ses.pk_play_session_id})
 			return res
 		else:
 			return Response(status=HTTPStatus.FORBIDDEN)
