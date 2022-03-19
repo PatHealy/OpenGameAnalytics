@@ -22,6 +22,7 @@ from config import admins, database_url, secret_key, game_dictionary
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_POOL_RECYCLE'] = 299
 
 db = SQLAlchemy(app)
 api = Api(app)
@@ -35,7 +36,23 @@ def username_ganerator(size=30, chars=string.ascii_uppercase + string.digits):
 	return ''.join(random.choice(chars) for _ in range(size))
 
 def auth(un, tk):
-	return check_password_hash(User.query.filter_by(username=un).first().token, tk)
+	print("User attempt login: " + un)
+	us = db.session.query(User).filter(User.username == un).first()
+	if us == None:
+		print("User login failed: " + un)
+		print(str(len(un)))
+		return False
+	print("User login success: " + un)
+	return check_password_hash(us.token, tk)
+
+def user_matches_session(un, sid):
+	us = db.session.query(User).filter(User.username == un).first()
+	if us == None:
+		return False
+	sess = db.session.query(PlaySession).filter(PlaySession.pk_play_session_id == sid).first()
+	if sess == None:
+		return False
+	return sess.fk_user_id == us.pk_user_id
 
 #####################################################
 # RESTful API Endpoints
@@ -71,7 +88,7 @@ class UserInfoAPI(Resource):
 
 		if auth(user['username'], user['token']):
 			new_info = UserInfo(attribute_name=user_info['attribute_name'], info=user_info['info'], created_at=parser.parse(json_data['created_at']),
-			                    fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
+			                    fk_user_id=db.session.query(User).filter(User.username == user['username']).first().pk_user_id)
 			db.session.add(new_info)
 			db.session.commit()
 			return Response(status=HTTPStatus.CREATED)
@@ -84,7 +101,7 @@ class SessionAPI(Resource):
 		json_data = request.get_json(force=True)
 		user = json_data['user']
 		if game_id in game_dictionary.keys() and auth(user['username'], user['token']):
-			new_ses = PlaySession(created_at=parser.parse(json_data['created_at']), fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
+			new_ses = PlaySession(created_at=parser.parse(json_data['created_at']), fk_user_id=db.session.query(User).filter(User.username == user['username']).first().pk_user_id)
 			db.session.add(new_ses)
 			db.session.commit()
 			res = jsonify({'play_session_id': new_ses.pk_play_session_id})
@@ -100,7 +117,7 @@ class SessionContinueAPI(Resource):
 		user = json_data['user']
 		play_session_id = json_data['play_session_id']
 
-		if auth(user['username'], user['token']):
+		if auth(user['username'], user['token']) and user_matches_session(user['username'], play_session_id):
 			new_ses_continue = PlaySessionContinue(fk_play_session_id=play_session_id, created_at=parser.parse(json_data['created_at']))
 			db.session.add(new_ses_continue)
 			db.session.commit()
@@ -116,7 +133,7 @@ class SessionEndAPI(Resource):
 		user = json_data['user']
 		play_session_id = json_data['play_session_id']
 
-		if auth(user['username'], user['token']):
+		if auth(user['username'], user['token']) and user_matches_session(user['username'], play_session_id):
 			new_ses_end = PlaySessionEnd(fk_play_session_id=play_session_id, created_at=parser.parse(json_data['created_at']))
 			db.session.add(new_ses_end)
 			db.session.commit()
@@ -132,9 +149,9 @@ class ActionAPI(Resource):
 		play_session_id = json_data['play_session_id']
 		action = json_data['data_point']
 
-		if auth(user['username'], user['token']):
+		if auth(user['username'], user['token']) and user_matches_session(user['username'], play_session_id):
 			new_action = PlayAction(action_name=action['attribute_name'], info=action['info'], created_at=parser.parse(json_data['created_at']),
-			                        fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id,
+			                        fk_user_id=db.session.query(User).filter(User.username == user['username']).first().pk_user_id,
 			                        fk_play_session_id=play_session_id)
 			db.session.add(new_action)
 			db.session.commit()
@@ -152,7 +169,7 @@ class IndependentAPI(Resource):
 
 		if auth(user['username'], user['token']):
 			new_point = IndependentPoint(attribute_name=point_data['attribute_name'], info=point_data['info'], created_at=parser.parse(json_data['created_at']),
-			                             fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
+			                             fk_user_id=db.session.query(User).filter(User.username == user['username']).first().pk_user_id)
 			db.session.add(new_point)
 			db.session.commit()
 			return Response(status=HTTPStatus.CREATED)
@@ -169,7 +186,7 @@ class DependentAPI(Resource):
 
 		if auth(user['username'], user['token']):
 			new_point = DependentPoint(attribute_name=point_data['attribute_name'], info=point_data['info'], created_at=parser.parse(json_data['created_at']),
-			                           fk_user_id=User.query.filter_by(username=user['username']).first().pk_user_id)
+			                           fk_user_id=db.session.query(User).filter(User.username == user['username']).first().pk_user_id)
 			db.session.add(new_point)
 			db.session.commit()
 			return Response(status=HTTPStatus.CREATED)
