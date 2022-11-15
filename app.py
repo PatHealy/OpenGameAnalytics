@@ -240,6 +240,14 @@ def view_sessions_of_user(user_id):
 		return render_template("admin_dashboard.html",table_label=table_label, table_description=table_description, table_header=table_header, table_data=table_data, messages=get_flashed_messages())
 	return abort(404)
 
+@app.route("/admin/dashboard/session/<session_id>")
+def view_session(session_id):
+	if admins[session["username"]] == session["password"]:
+		#table_label, table_description, table_header, table_data = get_user_sessions(user_id)
+		#return render_template("admin_dashboard.html",table_label=table_label, table_description=table_description, table_header=table_header, table_data=table_data, messages=get_flashed_messages())
+		return render_template("admin_dashboard.html", table_label="Session view still under development!", messages=get_flashed_messages())
+	return abort(404)
+
 @app.route("/admin/dump")
 def download_contents():
 	users = pd.read_sql("select * from user;", db.session.bind)
