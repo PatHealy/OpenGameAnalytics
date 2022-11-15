@@ -25,7 +25,8 @@ def get_user_sessions(user_id):
 			where fk_user_id = %(user_id)s group by pk_play_session_id
 			order by pk_play_session_id desc;
 		""",
-	    params={"user_id":user_id}
+	    params={"user_id":user_id},
+	    db.session.bind
 	)
 
 	table_label = "Sessions of user #" + str(user_id)
