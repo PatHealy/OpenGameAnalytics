@@ -4,10 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 def get_user_link(user_id):
-	return """<a href="/admin/dashboard/user/""" + str(user_id) + """">""" + str(user_id) + "</a>"
+	return {"link":"/admin/dashboard/user/""" + str(user_id), "content":user_id}
 
 def get_session_link(session_id):
-	return """<a href="/admin/dashboard/session/""" + str(session_id) + """">""" + str(session_id) + "</a>"
+	return {"link":"/admin/dashboard/session/""" + str(session_id), "content":session_id}
+
 
 def get_all_user_codes():
 	user_infos = pd.read_sql("select info as study_id, created_at, uploaded_at, fk_user_id as user_id from user_info where attribute_name='study_id' group by info, fk_user_id order by uploaded_at desc;", db.session.bind)

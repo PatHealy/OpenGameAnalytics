@@ -22,7 +22,11 @@ Admin Dashboard
                 {% for row in table_data %}
                     <tr>
                         {% for item in row %}
-                        <td>{{ item }}</td>
+                            {% if item is mapping %}
+                                <td><a href="{{ item['link'] }}">{{ item['content'] }}</a></td>
+                            {% else %}
+                                <td>{{ item }}</td>
+                            {% endif %}
                         {% endfor %}
                     </tr>
                 {% endfor %}
