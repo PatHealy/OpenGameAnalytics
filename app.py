@@ -13,7 +13,7 @@ import string
 from dateutil import parser
 
 from models import User, UserInfo, PlaySession, PlaySessionContinue, PlaySessionEnd, PlayAction, IndependentPoint, DependentPoint
-from queries import get_all_user_codes
+from queries import get_all_user_codes, get_user_sessions
 from config import admins, database_url, secret_key, game_dictionary
 
 #####################################################
@@ -229,8 +229,15 @@ def admin_login():
 @app.route("/admin/dashboard")
 def admin_dashboard():
 	if admins[session["username"]] == session["password"]:
-		table_label, table_header, table_data = get_all_user_codes()
-		return render_template("admin_dashboard.html",table_label=table_label, table_header=table_header, table_data=table_data, messages=get_flashed_messages())
+		table_label, table_description, table_header, table_data = get_all_user_codes()
+		return render_template("admin_dashboard.html",table_label=table_label, table_description=table_description, table_header=table_header, table_data=table_data, messages=get_flashed_messages())
+	return abort(404)
+
+@app.route("/admin/dashboard/user/<user_id>")
+def view_sessions_of_user(user_id):
+	if admins[session["username"]] == session["password"]:
+		table_label, table_description, table_header, table_data = get_user_sessions(user_id)
+		return render_template("admin_dashboard.html",table_label=table_label, table_description=table_description, table_header=table_header, table_data=table_data, messages=get_flashed_messages())
 	return abort(404)
 
 @app.route("/admin/dump")
