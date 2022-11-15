@@ -11,7 +11,7 @@ def get_session_link(session_id):
 
 
 def get_all_user_codes():
-	user_infos = pd.read_sql("select info as study_id, created_at, uploaded_at, fk_user_id as user_id from user_info where attribute_name='study_id' group by info, fk_user_id order by uploaded_at desc;", db.session.bind)
+	user_infos = pd.read_sql("select info as study_id, created_at, uploaded_at, fk_user_id as user_id from user_info where attribute_name='study_id' and info!='1234' group by info, fk_user_id order by uploaded_at desc;", db.session.bind)
 	table_label = "Users with study_id's"
 	table_description = "All of the study_id's logged in the database. If a user has logged the same study_id multiple times, this shows the first time it was logged. Click on the user_id to see a detailed summary of the user's activity."
 	table_header = ["study_id", "created_at", "uploaded_at", "user_id"]
