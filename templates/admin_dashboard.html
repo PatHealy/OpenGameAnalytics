@@ -8,4 +8,26 @@ Admin Dashboard
     <p>Downloads the database contents as a big excel file.</p>
     <p>Eventually this dashboard will be more elaborate, but for now this is what we've got.</p>
 
+    {% if table_data %}
+        <h2>{{ table_label }}</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    {% for head in table_header %}
+                        <th>{{ head }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in table_data %}
+                    <tr>
+                        {% for item in row %}
+                        <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
 {% endblock %}
