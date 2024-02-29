@@ -229,7 +229,7 @@ def admin_login():
 @app.route("/admin/dashboard")
 def admin_dashboard():
 	if admins[session["username"]] == session["password"]:
-		table_label, table_description, table_header, table_data = get_all_user_codes()
+		table_data = get_all_user_codes()
 		return render_template("admin_dashboard.html", table_datas=[table_data], messages=get_flashed_messages())
 	return abort(404)
 
@@ -244,7 +244,7 @@ def view_sessions_of_user(user_id):
 @app.route("/admin/dashboard/session/<session_id>")
 def view_session(session_id):
 	if admins[session["username"]] == session["password"]:
-		table_data = get_session_actions(user_id)
+		table_data = get_session_actions(session_id)
 		return render_template("admin_dashboard.html",table_datas=[table_data], messages=get_flashed_messages())
 	return abort(404)
 

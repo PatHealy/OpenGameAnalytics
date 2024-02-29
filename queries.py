@@ -72,10 +72,6 @@ def get_session_actions(session_id):
 	table_label = "Actions of user during session " + str(session_id)
 	table_description = ""
 	table_header = ["action_name", "info", "created_at", "uploaded_at"]
-	table_data = [[row["action_name"], row["info"], row["created_at"], row["uploaded_at"]] for index, row in condition_info.iterrows()]
+	table_data = [[row["action_name"], row["info"], row["created_at"], row["uploaded_at"]] for index, row in action_info.iterrows()]
 
 	return compile_table_data(table_label, table_description, table_header, table_data)
-
-
-
-#select action_name, info, created_at, uploaded_at from play_action where fk_play_session_id=27;
