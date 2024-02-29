@@ -7,19 +7,19 @@ Admin Dashboard
     <h2><a href="/admin/dump">Here's a link to download the database contents!</a></h2>
     <p>In case you'd prefer to do your own analysis, the above link downloads the entire database's contents as a big excel file.</p>
 
-    {% if table_data %}
-        <h2>{{ table_label }}</h2>
-        {{ table_description }}
+    {% for table_data in table_datas %}
+        <h2>{{ table_data['label'] }}</h2>
+        {{ table_data['description'] }}
         <table class="table">
             <thead>
                 <tr>
-                    {% for head in table_header %}
+                    {% for head in table_data['header'] %}
                         <th>{{ head }}</th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for row in table_data %}
+                {% for row in table_data['data'] %}
                     <tr>
                         {% for item in row %}
                             {% if item is mapping %}
@@ -32,6 +32,6 @@ Admin Dashboard
                 {% endfor %}
             </tbody>
         </table>
-    {% endif %}
+    {% endfor %}
 
 {% endblock %}

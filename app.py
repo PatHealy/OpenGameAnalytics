@@ -13,7 +13,7 @@ import string
 from dateutil import parser
 
 from models import User, UserInfo, PlaySession, PlaySessionContinue, PlaySessionEnd, PlayAction, IndependentPoint, DependentPoint
-from queries import get_all_user_codes, get_user_sessions
+from queries import get_all_user_codes, get_user_sessions, get_user_conditions, get_session_actions
 from config import admins, database_url, secret_key, game_dictionary
 
 #####################################################
@@ -230,22 +230,22 @@ def admin_login():
 def admin_dashboard():
 	if admins[session["username"]] == session["password"]:
 		table_label, table_description, table_header, table_data = get_all_user_codes()
-		return render_template("admin_dashboard.html",table_label=table_label, table_description=table_description, table_header=table_header, table_data=table_data, messages=get_flashed_messages())
+		return render_template("admin_dashboard.html", table_datas=[table_data], messages=get_flashed_messages())
 	return abort(404)
 
 @app.route("/admin/dashboard/user/<user_id>")
 def view_sessions_of_user(user_id):
 	if admins[session["username"]] == session["password"]:
-		table_label, table_description, table_header, table_data = get_user_sessions(user_id)
-		return render_template("admin_dashboard.html",table_label=table_label, table_description=table_description, table_header=table_header, table_data=table_data, messages=get_flashed_messages())
+		table_data = get_user_sessions(user_id)
+		second_data = get_user_conditions(user_id)
+		return render_template("admin_dashboard.html", table_datas=[table_data, second_data], messages=get_flashed_messages())
 	return abort(404)
 
 @app.route("/admin/dashboard/session/<session_id>")
 def view_session(session_id):
 	if admins[session["username"]] == session["password"]:
-		#table_label, table_description, table_header, table_data = get_user_sessions(user_id)
-		#return render_template("admin_dashboard.html",table_label=table_label, table_description=table_description, table_header=table_header, table_data=table_data, messages=get_flashed_messages())
-		return render_template("admin_dashboard.html", table_label="Session view still under development!", messages=get_flashed_messages())
+		table_data = get_session_actions(user_id)
+		return render_template("admin_dashboard.html",table_datas=[table_data], messages=get_flashed_messages())
 	return abort(404)
 
 @app.route("/admin/dump")
@@ -260,14 +260,14 @@ def download_contents():
 	dependent_points = pd.read_sql("select * from dependent_point;", db.session.bind)
 
 	with pd.ExcelWriter('data_dump.xlsx') as writer:
-		users.to_excel(writer, sheet_name="Users")
-		user_infos.to_excel(writer, sheet_name="User Infos")
-		play_sessions.to_excel(writer, sheet_name="Play Sessions")
-		play_session_continues.to_excel(writer, sheet_name="Play Session Continues")
-		play_session_ends.to_excel(writer, sheet_name="Play Session Ends")
-		play_actions.to_excel(writer, sheet_name="Play Actions")
-		independent_points.to_excel(writer, sheet_name="Independent Points")
-		dependent_points.to_excel(writer, sheet_name="Dependent Points")
+		users.to_excel(writer, sheet_name="Users", index=False)
+		user_infos.to_excel(writer, sheet_name="User Infos", index=False)
+		play_sessions.to_excel(writer, sheet_name="Play Sessions", index=False)
+		play_session_continues.to_excel(writer, sheet_name="Play Session Continues", index=False)
+		play_session_ends.to_excel(writer, sheet_name="Play Session Ends", index=False)
+		play_actions.to_excel(writer, sheet_name="Play Actions", index=False)
+		independent_points.to_excel(writer, sheet_name="Independent Points", index=False)
+		dependent_points.to_excel(writer, sheet_name="Dependent Points", index=False)
 	return send_file('data_dump.xlsx')
 
 if __name__ == "__main__":
